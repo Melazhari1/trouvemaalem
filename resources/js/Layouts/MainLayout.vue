@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper font-display min-h-screen bg-slate-50 flex flex-col" :class="{ rtl: isRtl }">
     <!-- Premium Header -->
-    <header class="sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-slate-100 h-20 flex items-center shadow-sm">
+    <header class="sticky top-0 z-[1001] bg-white border-b border-slate-100 h-20 flex items-center shadow-sm">
       <div class="container mx-auto px-4 flex justify-between items-center">
         <!-- Logo -->
         <Link href="/" class="flex items-center gap-2 group">
@@ -44,7 +44,7 @@
             </div>
           </div>
 
-          <ActionButton variant="primary" size="sm" href="/search">
+          <ActionButton variant="primary" size="sm" :href="`/${locale}/search`">
             {{ t('find_expert') }}
           </ActionButton>
         </nav>
@@ -106,11 +106,10 @@
     <MobileNav />
 
     <!-- Premium Footer -->
-    <footer class="bg-brand-blue mt-20 md:mt-32 pt-16 pb-20 lg:pb-32 text-white">
+    <footer class="bg-brand-blue mt-20 md:mt-32 pt-16 pb-20 lg:pb-16 text-white">
       <div class="container mx-auto px-4 text-center lg:text-left">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
-          <div class="lg:col-span-2 space-y-6">
-            <img src="/images/logo.png" alt="trouvemaalem logo" class="h-12 w-auto mx-auto lg:mx-0 brightness-200" />
+          <div class="lg:col-span-2 space-y-6">            
             <p class="text-slate-400 max-w-md mx-auto lg:mx-0 leading-relaxed">
               Le premier marketplace premium au Maroc pour les services artisanaux. Qualité, confiance et expertise à portée de clic.
             </p>
@@ -124,20 +123,14 @@
           <div class="space-y-4">
             <h4 class="text-xs font-black uppercase tracking-widest text-brand-orange">Legal</h4>
             <div class="flex flex-col gap-2 text-sm font-bold text-slate-300">
-              <Link href="/about">À propos</Link>
-              <Link href="/contact">Contact</Link>
-              <Link href="/faq">FAQ</Link>
+              <Link :href="`/${locale}/about`">À propos</Link>
+              <Link :href="`/${locale}/contact`">Contact</Link>
+              <Link :href="`/${locale}/faq`">FAQ</Link>
             </div>
           </div>
         </div>
         <div class="pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-4">
           <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">© {{ new Date().getFullYear() }} TROUVEMAALEM. ALL RIGHTS RESERVED.</p>
-          <div class="flex gap-6 grayscale opacity-50">
-            <!-- Social Placeholder Icons -->
-            <div class="w-5 h-5 bg-white rounded-full"></div>
-            <div class="w-5 h-5 bg-white rounded-full"></div>
-            <div class="w-5 h-5 bg-white rounded-full"></div>
-          </div>
         </div>
       </div>
     </footer>

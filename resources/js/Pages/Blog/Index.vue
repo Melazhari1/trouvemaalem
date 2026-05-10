@@ -23,7 +23,7 @@
 
       <div class="blog-grid" v-else>
         <article v-for="post in posts" :key="post.id" class="blog-card">
-          <Link :href="`/blog/${post.slug}`" class="blog-image-link">
+          <Link :href="`/${locale}/blog/${post.slug}`" class="blog-image-link">
             <div class="blog-card-img">
               <img v-if="post.image" :src="post.image" :alt="post.title" loading="lazy" />
               <div v-else class="placeholder-img"></div>
@@ -33,11 +33,11 @@
             <div class="blog-meta">
               <span class="blog-date">{{ new Date(post.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
             </div>
-            <Link :href="`/blog/${post.slug}`" class="blog-title-link">
+            <Link :href="`/${locale}/blog/${post.slug}`" class="blog-title-link">
               <h2>{{ post.title }}</h2>
             </Link>
             <p class="blog-excerpt">{{ post.excerpt }}</p>
-            <Link :href="`/blog/${post.slug}`" class="btn-read-more">
+            <Link :href="`/${locale}/blog/${post.slug}`" class="btn-read-more">
               Lire la suite →
             </Link>
           </div>
@@ -51,6 +51,9 @@
 import MainLayout from '../../Layouts/MainLayout.vue';
 import SeoHead from '../../Components/SeoHead.vue';
 import { Link } from '@inertiajs/vue3';
+import { useTranslations } from '../../Composables/useTranslations';
+
+const { locale } = useTranslations();
 
 const props = defineProps({
   posts: {

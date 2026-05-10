@@ -8,7 +8,7 @@
     <!-- Article Header -->
     <section class="article-header">
       <div class="container article-header-inner">
-        <Link href="/blog" class="back-link">← Retour au blog</Link>
+        <Link :href="`/${locale}/blog`" class="back-link">← Retour au blog</Link>
         <div class="article-meta">
           <span class="article-date">{{ new Date(post.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) }}</span>
         </div>
@@ -36,6 +36,9 @@ import { computed } from 'vue';
 import MainLayout from '../../Layouts/MainLayout.vue';
 import SeoHead from '../../Components/SeoHead.vue';
 import { Link } from '@inertiajs/vue3';
+import { useTranslations } from '../../Composables/useTranslations';
+
+const { locale } = useTranslations();
 
 const props = defineProps({
   post: {

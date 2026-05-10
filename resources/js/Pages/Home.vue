@@ -28,7 +28,7 @@
 
         <!-- Main Search Actions -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
-          <ActionButton size="lg" variant="primary" class="w-full sm:w-auto" href="/search">
+          <ActionButton size="lg" variant="primary" class="w-full sm:w-auto" :href="`/${locale}/search`">
             {{ t('view_artisans') }}
             <template #icon-right>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -125,7 +125,7 @@
         <Link 
           v-for="cat in categories" 
           :key="cat.id" 
-          :href="`/categories/${cat.slug}`"
+          :href="`/${locale}/categories/${cat.slug}`"
           class="flex-none w-[280px] md:w-[350px] group relative h-96 rounded-3xl overflow-hidden shadow-soft transition-transform duration-500 hover:-translate-y-2 snap-start"
         >
           <img :src="cat.image" :alt="cat.name" class="absolute inset-0 w-full h-full object-fit-cover transition-transform duration-700 group-hover:scale-110" />
@@ -184,7 +184,7 @@
           <h2 class="text-3xl md:text-4xl text-brand-blue mb-2">{{ t('top_workers') }}</h2>
           <p class="text-slate-500">{{ t('seo_home_desc') }}</p>
         </div>
-        <ActionButton variant="outline" href="/search">{{ t('view_artisans') }}</ActionButton>
+        <ActionButton variant="outline" :href="`/${locale}/search`">{{ t('view_artisans') }}</ActionButton>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -214,7 +214,7 @@
             <div class="flex justify-between items-start mb-4">
               <div>
                 <h3 class="text-xl text-brand-blue mb-1">{{ worker.name }}</h3>
-                <Link :href="`/categories/${worker.category.slug}`" @click.stop class="text-brand-orange text-xs font-bold uppercase tracking-widest hover:underline">{{ worker.category.name }}</Link>
+                <Link :href="`/${locale}/categories/${worker.category.slug}`" @click.stop class="text-brand-orange text-xs font-bold uppercase tracking-widest hover:underline">{{ worker.category.name }}</Link>
               </div>
             </div>
 
@@ -234,17 +234,6 @@
       </div>
     </section>
 
-    <!-- Bottom CTA -->
-    <section class="container my-12 md:my-16 pb-20 md:pb-32">
-      <div class="bg-brand-blue rounded-3xl p-12 md:p-20 relative overflow-hidden text-center mt-12 mb-12">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-orange/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div class="relative z-10 max-w-2xl mx-auto">
-          <h2 class="text-white text-3xl md:text-5xl mb-6">{{ t('hero_headline') }}</h2>
-          <p class="text-slate-300 mb-10 text-lg">{{ t('hero_subtitle') }}</p>
-          <ActionButton size="lg" variant="primary" href="/search">{{ t('view_artisans') }}</ActionButton>
-        </div>
-      </div>
-    </section>
   </MainLayout>
 </template>
 
@@ -259,7 +248,7 @@ const WorkerMap = defineAsyncComponent(() => import('../Components/WorkerMap.vue
 import { Link, router } from '@inertiajs/vue3';
 import { useTranslations } from '../Composables/useTranslations';
 
-const { t } = useTranslations();
+const { t, locale } = useTranslations();
 const slider = ref(null);
 let isDown = false;
 let startX;
@@ -378,7 +367,7 @@ function clearFilters() {
 }
 
 function goToWorker(worker) {
-  router.visit(`/artisan/${worker.slug}`);
+  router.visit(`/${locale.value}/artisan/${worker.slug}`);
 }
 </script>
 
