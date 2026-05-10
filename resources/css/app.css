@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.vue';
+
+@theme {
+    /* Typography */
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Plus Jakarta Sans', sans-serif;
+    --font-arabic: 'Cairo', sans-serif;
+
+    /* Brand Colors */
+    --color-brand-blue: #113559;
+    --color-brand-blue-light: #1a4a7c;
+    --color-brand-orange: #d78126;
+    --color-brand-orange-light: #e8953d;
+    --color-brand-gold: #cba346;
+    
+    /* Semantic Colors */
+    --color-surface: #ffffff;
+    --color-background: #f8fafc;
+    --color-text-main: #0f172a;
+    --color-text-muted: #64748b;
+
+    /* Custom Radius & Shadows */
+    --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
+    
+    --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+    --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.12);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-main font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-extrabold tracking-tight;
+  }
+
+  /* RTL Support for Arabic */
+  [dir="rtl"] {
+    @apply font-arabic;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-soft;
+  }
+}

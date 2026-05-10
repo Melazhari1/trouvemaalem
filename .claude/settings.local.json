@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer require *)",
+      "Bash(php artisan *)",
+      "Bash(php -r ' *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\wamp64\\\\www\\\\xxp\\\\workefinder\\\\app\\\\Models\\\\\" -File | Select-Object Name)",
+      "PowerShell(cd c:\\\\wamp64\\\\www\\\\xxp\\\\workefinder; ls app\\\\Models\\\\ | % { $_.Name })",
+      "PowerShell(cd c:\\\\wamp64\\\\www\\\\xxp\\\\workefinder; ls app\\\\Http\\\\Controllers\\\\ -File | % { $_.Name })",
+      "Bash(grep -n 'public function form\\\\b\\\\|Schema $schema\\\\|->statePath\\\\|->fill\\\\|getState\\\\b' c:/wamp64/www/xxp/workefinder/vendor/filament/filament/src/Pages/BasePage.php)",
+      "Bash(xargs grep -l \"public function fill\\\\b\\\\|public function getState\\\\b\")",
+      "Bash(xargs grep -l \"getSchema\\\\|schemas\\\\b\")",
+      "Bash(Select-String -Path .env -Pattern \"LOG_|SENTRY\")",
+      "Bash(Select-Object Line)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}
