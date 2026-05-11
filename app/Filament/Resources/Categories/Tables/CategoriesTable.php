@@ -48,6 +48,6 @@ class CategoriesTable
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('name');
+            ->defaultSort('slug');
     }
 }

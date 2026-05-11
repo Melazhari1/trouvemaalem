@@ -26,7 +26,9 @@ class CategoryForm
 
                         FileUpload::make('image')
                             ->image()
-                            ->directory('categories'),
+                            ->disk('public')
+                            ->directory('categories')
+                            ->columnSpanFull(),
                     ]),
 
                 Tabs::make('Translations')

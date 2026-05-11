@@ -32,6 +32,7 @@ class PostForm
 
                         FileUpload::make('image')
                             ->image()
+                            ->disk('public')
                             ->directory('posts')
                             ->columnSpanFull(),
                     ]),
