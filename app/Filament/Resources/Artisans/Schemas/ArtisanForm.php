@@ -39,6 +39,7 @@ class ArtisanForm
 
                         FileUpload::make('image')
                             ->image()
+                            ->disk('public')
                             ->directory('artisans'),
                     ]),
 

@@ -1,2 +1,8 @@
 *
 !.gitignore
+!posts/
+!posts/.gitkeep
+!categories/
+!categories/.gitkeep
+!artisans/
+!artisans/.gitkeep
