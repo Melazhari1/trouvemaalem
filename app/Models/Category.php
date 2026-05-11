@@ -49,6 +49,9 @@ class Category extends Model
                 $attributes[$field] = $this->getTranslation($field, $locale, true);
             }
         }
+        if (!empty($attributes['image']) && !str_starts_with($attributes['image'], 'http')) {
+            $attributes['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($attributes['image']);
+        }
         return $attributes;
     }
 

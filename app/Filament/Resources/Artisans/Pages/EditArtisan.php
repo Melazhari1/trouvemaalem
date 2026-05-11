@@ -16,4 +16,16 @@ class EditArtisan extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $record = $this->getRecord();
+        $data['image'] = $record->getRawOriginal('image');
+        foreach (['name', 'bio', 'location'] as $field) {
+            foreach (['en', 'fr', 'ar'] as $locale) {
+                $data["{$field}_{$locale}"] = $record->getTranslation($field, $locale, false) ?? '';
+            }
+        }
+        return $data;
+    }
 }

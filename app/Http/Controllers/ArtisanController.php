@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Models\Artisan;
 
@@ -17,7 +18,7 @@ class ArtisanController extends Controller
                 'lat'      => $a->lat,
                 'lng'      => $a->lng,
                 'slug'     => $a->slug,
-                'image'    => $a->image,
+                'image'    => $a->image && !str_starts_with($a->image, 'http') ? Storage::disk('public')->url($a->image) : $a->image,
                 'rating'   => $a->rating,
                 'category' => $a->category ? [
                     'id'   => $a->category->id,
