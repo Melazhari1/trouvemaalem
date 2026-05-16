@@ -141,6 +141,20 @@ return [
     'recaptcha_failed'         => 'reCAPTCHA verification failed. Please try again.',
     'rate_limit_error'         => 'Too many attempts. Please wait before trying again.',
 
+    // About page
+    'about_seo_title'          => 'About us - trouvemaalem',
+    'about_seo_desc'           => 'Discover trouvemaalem\'s mission and our commitment to Moroccan craftsmanship.',
+    'about_hero_title'         => 'About',
+    'about_hero_title_accent'  => 'Us',
+    'about_hero_subtitle'      => 'Discover our mission and our commitment to Moroccan craftsmanship.',
+    'about_mission_title'      => 'Our',
+    'about_mission_title_accent' => 'Mission',
+    'about_mission_p1'         => 'trouvemaalem was created with a simple vision: to connect the best Moroccan artisans with clients who need their services. We believe in valuing traditional craftsmanship and creating opportunities for local professionals.',
+    'about_mission_p2'         => 'Our platform allows users to easily find electricians, plumbers, carpenters and other qualified artisans, while giving those professionals a showcase to present their work and grow their business.',
+    'about_stat_artisans'      => 'Artisans',
+    'about_stat_cities'        => 'Cities',
+    'about_image_alt'          => 'Moroccan Craftsmanship',
+
     // FAQ section (home page)
     'faq_section_title'        => 'Frequently Asked Questions',
     'faq_section_subtitle'     => 'Everything you need to know about trouvemaalem.',

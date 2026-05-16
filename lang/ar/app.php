@@ -141,6 +141,20 @@ return [
     'recaptcha_failed'         => 'فشل التحقق من reCAPTCHA. يرجى المحاولة مرة أخرى.',
     'rate_limit_error'         => 'محاولات كثيرة جداً. يرجى الانتظار قبل المحاولة مرة أخرى.',
 
+    // About page
+    'about_seo_title'          => 'من نحن - trouvemaalem',
+    'about_seo_desc'           => 'اكتشف مهمة trouvemaalem والتزامنا بالحرف اليدوية المغربية.',
+    'about_hero_title'         => 'من',
+    'about_hero_title_accent'  => 'نحن',
+    'about_hero_subtitle'      => 'اكتشف مهمتنا والتزامنا بالحرف اليدوية المغربية.',
+    'about_mission_title'      => 'مهمتنا',
+    'about_mission_title_accent' => '',
+    'about_mission_p1'         => 'تأسس trouvemaalem بهدف بسيط: ربط أفضل الحرفيين المغاربة بالعملاء الذين يحتاجون إلى خدماتهم. نؤمن بتثمين الحرف التقليدية وخلق الفرص للمهنيين المحليين.',
+    'about_mission_p2'         => 'تتيح منصتنا للمستخدمين العثور بسهولة على الكهربائيين والسباكين والنجارين وغيرهم من الحرفيين المؤهلين، مع توفير واجهة عرض لهؤلاء المحترفين لتقديم أعمالهم وتنمية نشاطهم.',
+    'about_stat_artisans'      => 'حرفي',
+    'about_stat_cities'        => 'مدينة',
+    'about_image_alt'          => 'الحرف اليدوية المغربية',
+
     // FAQ section (home page)
     'faq_section_title'        => 'الأسئلة الشائعة',
     'faq_section_subtitle'     => 'كل ما تحتاج معرفته عن trouvemaalem.',

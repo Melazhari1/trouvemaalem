@@ -141,6 +141,20 @@ return [
     'recaptcha_failed'         => 'Échec de la vérification reCAPTCHA. Veuillez réessayer.',
     'rate_limit_error'         => 'Trop de tentatives. Veuillez patienter avant de réessayer.',
 
+    // About page
+    'about_seo_title'          => 'À propos - trouvemaalem',
+    'about_seo_desc'           => 'Découvrez la mission de trouvemaalem et notre engagement envers l\'artisanat marocain.',
+    'about_hero_title'         => 'À propos de',
+    'about_hero_title_accent'  => 'Nous',
+    'about_hero_subtitle'      => 'Découvrez notre mission et notre engagement envers l\'artisanat marocain.',
+    'about_mission_title'      => 'Notre',
+    'about_mission_title_accent' => 'Mission',
+    'about_mission_p1'         => 'trouvemaalem a été créé avec une vision simple : connecter les meilleurs artisans marocains avec les clients qui ont besoin de leurs services. Nous croyons en la valorisation du savoir-faire traditionnel et en la création d\'opportunités pour les professionnels locaux.',
+    'about_mission_p2'         => 'Notre plateforme permet aux utilisateurs de trouver facilement des électriciens, plombiers, menuisiers et autres artisans qualifiés, tout en offrant à ces derniers une vitrine pour présenter leur travail et développer leur activité.',
+    'about_stat_artisans'      => 'Artisans',
+    'about_stat_cities'        => 'Villes',
+    'about_image_alt'          => 'Artisanat Marocain',
+
     // FAQ section (home page)
     'faq_section_title'        => 'Questions fréquentes',
     'faq_section_subtitle'     => 'Tout ce que vous devez savoir sur trouvemaalem.',

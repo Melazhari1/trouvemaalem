@@ -1,15 +1,15 @@
 <template>
   <MainLayout>
     <SeoHead
-      title="A propos - trouvemaalem"
-      description="Learn more about trouvemaalem, our mission, and the team behind the platform."
+      :title="t('about_seo_title')"
+      :description="t('about_seo_desc')"
     />
 
     <!-- Header Section -->
     <section class="page-header">
       <div class="container header-inner">
-        <h1>À propos de <span class="text-accent">Nous</span></h1>
-        <p class="page-subtitle">Découvrez notre mission et notre engagement envers l'artisanat marocain.</p>
+        <h1>{{ t('about_hero_title') }} <span class="text-accent">{{ t('about_hero_title_accent') }}</span></h1>
+        <p class="page-subtitle">{{ t('about_hero_subtitle') }}</p>
       </div>
     </section>
 
@@ -17,31 +17,26 @@
     <section class="container section">
       <div class="about-content">
         <div class="about-text">
-          <h2>Notre <span class="text-accent">Mission</span></h2>
-          <p>
-            trouvemaalem a été créé avec une vision simple : connecter les meilleurs artisans marocains avec les clients qui ont besoin de leurs services. Nous croyons en la valorisation du savoir-faire traditionnel et en la création d'opportunités pour les professionnels locaux.
-          </p>
-          <p>
-            Notre plateforme permet aux utilisateurs de trouver facilement des électriciens, plombiers, menuisiers et autres artisans qualifiés, tout en offrant à ces derniers une vitrine pour présenter leur travail et développer leur activité.
-          </p>
-          
+          <h2>
+            {{ t('about_mission_title') }}
+            <span v-if="t('about_mission_title_accent')" class="text-accent"> {{ t('about_mission_title_accent') }}</span>
+          </h2>
+          <p>{{ t('about_mission_p1') }}</p>
+          <p>{{ t('about_mission_p2') }}</p>
+
           <div class="stats-grid">
             <div class="stat-card">
               <h3>500+</h3>
-              <p>Artisans</p>
-            </div>
-            <div class="stat-card">
-              <h3>10k+</h3>
-              <p>Clients satisfaits</p>
+              <p>{{ t('about_stat_artisans') }}</p>
             </div>
             <div class="stat-card">
               <h3>12</h3>
-              <p>Villes</p>
+              <p>{{ t('about_stat_cities') }}</p>
             </div>
           </div>
         </div>
         <div class="about-image">
-          <img src="https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?q=80&w=2070&auto=format&fit=crop" alt="Artisanat Marocain" />
+          <img src="https://images.unsplash.com/photo-1541123356219-284ebe98ae3b?q=80&w=2070&auto=format&fit=crop" :alt="t('about_image_alt')" />
         </div>
       </div>
     </section>
@@ -51,6 +46,9 @@
 <script setup>
 import MainLayout from '../Layouts/MainLayout.vue';
 import SeoHead from '../Components/SeoHead.vue';
+import { useTranslations } from '../Composables/useTranslations';
+
+const { t } = useTranslations();
 </script>
 
 <style scoped>
