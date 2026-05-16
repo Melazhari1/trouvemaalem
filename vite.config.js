@@ -19,6 +19,9 @@ export default defineConfig({
             },
         }),
     ],
+    optimizeDeps: {
+        include: ['leaflet', 'leaflet.markercluster'],
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

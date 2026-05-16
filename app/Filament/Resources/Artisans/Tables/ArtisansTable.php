@@ -29,10 +29,11 @@ class ArtisansTable
                     ->searchable(query: fn ($query, $search) => $query->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(artisans.name, '$.en')) LIKE ?", ["%{$search}%"]))
                     ->sortable(query: fn ($query, $direction) => $query->orderByRaw("JSON_UNQUOTE(JSON_EXTRACT(artisans.name, '$.en')) {$direction}")),
 
-                TextColumn::make('category.name')
-                    ->label('Category')
-                    ->getStateUsing(fn ($record) => $record->category?->getTranslation('name', $locale, false) ?: $record->category?->getTranslation('name', 'en', false))
-                    ->sortable()
+                TextColumn::make('categories.name')
+                    ->label('Categories')
+                    ->getStateUsing(fn ($record) => $record->categories->map(
+                        fn ($c) => $c->getTranslation('name', $locale, false) ?: $c->getTranslation('name', 'en', false)
+                    )->filter()->join(', '))
                     ->badge(),
 
                 TextColumn::make('city')
@@ -41,6 +42,11 @@ class ArtisansTable
 
                 TextColumn::make('phone')
                     ->searchable(),
+
+                TextColumn::make('whatsapp')
+                    ->label('WhatsApp')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('is_verified')
                     ->label('Verified')
@@ -61,7 +67,11 @@ class ArtisansTable
                     ->label('Category')
                     ->options(fn () => Category::all()->mapWithKeys(fn ($c) => [
                         $c->id => $c->getTranslation('name', $locale, false) ?: $c->getTranslation('name', 'en', false),
-                    ])),
+                    ]))
+                    ->query(fn ($query, array $data) => filled($data['value'])
+                        ? $query->whereHas('categories', fn ($q) => $q->where('categories.id', $data['value']))
+                        : $query
+                    ),
 
                 TernaryFilter::make('is_verified')
                     ->label('Verified'),

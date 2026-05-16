@@ -2,9 +2,9 @@
   <MainLayout>
     <SeoHead
       v-if="artisan"
-      :title="`${artisan.name} - ${artisan.category.name}`"
-      :description="artisan.bio"
-      :image="artisan.image"
+      :title="artisan ? `${artisan.name} - ${(artisan.categories ?? []).map(c => c?.name ?? '').filter(Boolean).join(', ')}` : ''"
+      :description="artisan?.bio ?? ''"
+      :image="artisan?.image ?? ''"
       ogType="profile"
       :schema="schema"
     />
@@ -24,7 +24,12 @@
             
             <div class="flex-1 text-center md:text-left pb-4">
               <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-4">
-                <Link :href="`/categories/${artisan.category.slug}`" class="text-brand-orange text-xs font-black uppercase tracking-widest hover:underline">{{ artisan.category.name }}</Link>
+                <Link
+                  v-for="cat in (artisan.categories ?? []).filter(Boolean)"
+                  :key="cat.id"
+                  :href="`/${locale}/categories/${cat.slug}`"
+                  class="text-brand-orange text-xs font-black uppercase tracking-widest hover:underline"
+                >{{ cat.name }}</Link>
                 <TrustBadge v-if="artisan.is_verified" type="verified" size="sm">{{ t('verified_badge') }}</TrustBadge>
                 <TrustBadge v-if="artisan.rating >= 4.5" type="top" size="sm">{{ t('top_rated') }}</TrustBadge>
               </div>
@@ -32,9 +37,9 @@
               <div class="flex items-center justify-center md:justify-start gap-4 text-slate-300">
                 <div class="flex items-center gap-1.5">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span class="text-sm font-bold">{{ artisan.location }}, {{ artisan.city }}</span>
+                  <span class="text-sm font-bold">{{ [artisan.location, artisan.city].filter(Boolean).join(', ') }}</span>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div v-if="artisan.rating > 0" class="flex items-center gap-1.5">
                   <span class="text-brand-orange font-black">★</span>
                   <span class="text-sm font-bold">{{ Number(artisan.rating).toFixed(1) }} ({{ artisan.reviews?.length || 0 }} {{ t('rating') }})</span>
                 </div>
@@ -60,7 +65,14 @@
             <!-- Map Section -->
             <PremiumCard :hoverable="false" bodyClass="p-0 overflow-hidden">
                <div class="p-8 border-b border-slate-100">
-                 <h2 class="text-2xl font-black text-brand-blue">{{ t('location_label') }}</h2>
+                 <h2 class="text-2xl font-black text-brand-blue mb-3">{{ t('location_label') }}</h2>
+                 <div v-if="artisan.locations?.length" class="space-y-1">
+                   <p
+                     v-for="(loc, i) in artisan.locations"
+                     :key="i"
+                     class="text-slate-500 text-sm font-medium"
+                   >{{ loc[locale] || loc.en || loc.fr || '' }}</p>
+                 </div>
                </div>
                <div class="h-[400px] md:h-[500px]">
                  <ClientOnly>
@@ -119,23 +131,25 @@
                 </div>
 
                 <div class="space-y-4">
-                  <ActionButton 
-                    variant="whatsapp" 
-                    size="lg" 
-                    fullWidth 
-                    :href="`https://wa.me/${artisan.phone}`"
+                  <ActionButton
+                    v-if="artisan.whatsapp"
+                    variant="whatsapp"
+                    size="lg"
+                    fullWidth
+                    :href="`https://wa.me/${artisan.whatsapp.replace(/\D/g, '')}`"
                     target="_blank"
                   >
                     <template #icon-left>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.417-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.599-3.835c1.522.902 3.19 1.379 4.894 1.38h.005c5.454 0 9.893-4.438 9.896-9.891.002-2.646-1.03-5.127-2.903-7.004-1.873-1.877-4.355-2.909-7.001-2.91-5.451 0-9.891 4.438-9.894 9.892-.001 1.83.504 3.614 1.461 5.193l-.952 3.474 3.589-.944zm11.396-7.391c-.328-.164-1.94-.957-2.24-.1.066-.3-.329-.164-.328.164.1-.246.334-.415.547-.41.246.224.164.246-.104-.328-.164-.334-.415-.547-.41s-.437.058-.765.222c-.328.164-1.397.515-2.651 1.634-1.022.912-1.712 2.037-1.913 2.381s-.021.53.144.694c.148.148.328.383.492.574s.219.328.328.547c.11.219.055.41-.027.574-.082.164-.738 1.776-.984 2.377-.245.601-.492.519-.683.53-.175.011-.383.011-.59.011-.208 0-.547.078-.831.383s-1.082 1.057-1.082 2.578 1.115 3.007 1.262 3.205c.148.197 2.197 3.355 5.323 4.707.743.322 1.325.515 1.777.659.748.237 1.429.204 1.969.123.6-.09 1.94-.792 2.213-1.557.273-.765.273-1.421.191-1.557-.082-.136-.3-.218-.628-.382z"/></svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 0.9-6.9-0.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-0.2-6.9-0.2-10.6-0.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
                     </template>
                     {{ t('btn_whatsapp') }}
                   </ActionButton>
 
-                  <ActionButton 
-                    variant="secondary" 
-                    size="lg" 
-                    fullWidth 
+                  <ActionButton
+                    v-if="artisan.phone"
+                    variant="secondary"
+                    size="lg"
+                    fullWidth
                     :href="`tel:${artisan.phone}`"
                   >
                     <template #icon-left>
@@ -163,22 +177,24 @@
     </div>
 
     <!-- Sticky Mobile Contact Bar -->
-    <div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 backdrop-blur-xl border-t border-slate-100 p-4 flex gap-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
-      <ActionButton 
-        variant="whatsapp" 
-        size="md" 
+    <div v-if="artisan.whatsapp || artisan.phone" class="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 backdrop-blur-xl border-t border-slate-100 p-4 flex gap-3 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
+      <ActionButton
+        v-if="artisan.whatsapp"
+        variant="whatsapp"
+        size="md"
         class="flex-1"
-        :href="`https://wa.me/${artisan.phone}`"
+        :href="`https://wa.me/${artisan.whatsapp.replace(/\D/g, '')}`"
         target="_blank"
       >
         <template #icon-left>
-           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.417-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.599-3.835c1.522.902 3.19 1.379 4.894 1.38h.005c5.454 0 9.893-4.438 9.896-9.891.002-2.646-1.03-5.127-2.903-7.004-1.873-1.877-4.355-2.909-7.001-2.91-5.451 0-9.891 4.438-9.894 9.892-.001 1.83.504 3.614 1.461 5.193l-.952 3.474 3.589-.944zm11.396-7.391c-.328-.164-1.94-.957-2.24-.1.066-.3-.329-.164-.328.164.1-.246.334-.415.547-.41.246.224.164.246-.104-.328-.164-.334-.415-.547-.41s-.437.058-.765.222c-.328.164-1.397.515-2.651 1.634-1.022.912-1.712 2.037-1.913 2.381s-.021.53.144.694c.148.148.328.383.492.574s.219.328.328.547c.11.219.055.41-.027.574-.082.164-.738 1.776-.984 2.377-.245.601-.492.519-.683.53-.175.011-.383.011-.59.011-.208 0-.547.078-.831.383s-1.082 1.057-1.082 2.578 1.115 3.007 1.262 3.205c.148.197 2.197 3.355 5.323 4.707.743.322 1.325.515 1.777.659.748.237 1.429.204 1.969.123.6-.09 1.94-.792 2.213-1.557.273-.765.273-1.421.191-1.557-.082-.136-.3-.218-.628-.382z"/></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 448 512" fill="currentColor"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 0.9-6.9-0.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-0.2-6.9-0.2-10.6-0.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
         </template>
         {{ t('btn_whatsapp') }}
       </ActionButton>
-      <ActionButton 
-        variant="secondary" 
-        size="md" 
+      <ActionButton
+        v-if="artisan.phone"
+        variant="secondary"
+        size="md"
         class="flex-1"
         :href="`tel:${artisan.phone}`"
       >
@@ -204,7 +220,7 @@ import ReviewFormSubmit from '../../Components/ReviewFormSubmit.vue';
 import { Link } from '@inertiajs/vue3';
 import { useTranslations } from '../../Composables/useTranslations';
 
-const { t } = useTranslations();
+const { t, locale } = useTranslations();
 
 const props = defineProps({
   artisan: Object,

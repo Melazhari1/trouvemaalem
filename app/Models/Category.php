@@ -57,6 +57,6 @@ class Category extends Model
 
     public function artisans()
     {
-        return $this->hasMany(Artisan::class);
+        return $this->belongsToMany(Artisan::class);
     }
 }

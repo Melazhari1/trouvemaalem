@@ -3,6 +3,7 @@
     <SeoHead
       title="Frequently Asked Questions - trouvemaalem"
       description="Find answers to all your questions about trouvemaalem, finding workers, pricing, and more."
+      :schema="schema"
     />
 
     <!-- Header Section -->
@@ -32,7 +33,8 @@ const props = defineProps({
     type: Array,
     required: true,
     default: () => []
-  }
+  },
+  schema: Object,
 });
 </script>
 

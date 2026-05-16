@@ -3,6 +3,7 @@
     <SeoHead
       :title="`${post.title} - Blog trouvemaalem`"
       :description="post.excerpt"
+      :schema="schema"
     />
 
     <!-- Article Header -->
@@ -44,7 +45,8 @@ const props = defineProps({
   post: {
     type: Object,
     required: true,
-  }
+  },
+  schema: Object,
 });
 
 // A simple formatter for Markdown-like bold text and newlines for dummy data

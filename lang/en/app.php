@@ -10,6 +10,7 @@ return [
     'nav_home' => 'Home',
     'nav_categories' => 'Categories',
     'nav_search' => 'Search',
+    'nav_blog' => 'Blog',
 
     // Hero Section
     'hero_title_1' => 'Find Trusted',
@@ -62,6 +63,8 @@ return [
     'contact_artisan' => 'Contact Now',
     'btn_whatsapp' => 'WhatsApp',
     'btn_call' => 'Call Now',
+    'view_profile' => 'View Profile',
+    'quick_view'   => 'Quick View',
     'verified_badge' => 'Verified',
     'top_rated' => 'Top Rated',
     'fast_responder' => 'Fast Responder',

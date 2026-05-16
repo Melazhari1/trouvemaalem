@@ -3,6 +3,7 @@
     <SeoHead
       :title="t('search_title')"
       :description="t('search_description')"
+      :schema="schema"
     />
 
     <div class="search-page bg-slate-50 min-h-screen pb-20 lg:pb-0">
@@ -96,7 +97,7 @@
         <div class="flex flex-col lg:flex-row gap-8 relative">
           <!-- Left: Results Grid -->
           <div class="lg:w-3/5">
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center justify-between mb-8 mt-6">
               <h2 class="text-2xl font-black text-brand-blue">
                 {{ artisans.total }} <span class="text-slate-400 font-bold uppercase text-sm tracking-widest ml-2">{{ t('artisans_found') }}</span>
               </h2>
@@ -130,12 +131,20 @@
                 <div>
                   <div class="flex justify-between items-start mb-2">
                     <h3 class="text-lg text-brand-blue">{{ worker.name }}</h3>
-                    <div class="flex items-center gap-1">
+                    <div v-if="worker.average_rating > 0" class="flex items-center gap-1">
                       <span class="text-brand-orange text-sm">★</span>
                       <span class="text-brand-blue text-sm font-black">{{ Number(worker.average_rating).toFixed(1) }}</span>
                     </div>
                   </div>
-                  <Link :href="`/categories/${worker.category.slug}`" @click.stop class="text-brand-orange text-[10px] font-black uppercase tracking-widest mb-3 inline-block">{{ worker.category.name }}</Link>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <Link
+                      v-for="cat in worker.categories"
+                      :key="cat.id"
+                      :href="`/${locale}/categories/${cat.slug}`"
+                      @click.stop
+                      class="text-brand-orange text-[10px] font-black uppercase tracking-widest hover:underline"
+                    >{{ cat.name }}</Link>
+                  </div>
                   <p class="text-slate-500 text-sm mb-4 line-clamp-2 leading-relaxed">{{ worker.bio }}</p>
                   
                   <div class="flex items-center justify-between pt-4 border-t border-slate-100">
@@ -143,7 +152,13 @@
                       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                       <span class="text-[10px] font-bold uppercase tracking-wider">{{ worker.location }}</span>
                     </div>
-                    <span v-if="worker.distance" class="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{{ Number(worker.distance).toFixed(1) }}km</span>
+                    <div class="flex items-center gap-2">
+                      <span v-if="worker.distance" class="text-[10px] font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{{ Number(worker.distance).toFixed(1) }}km</span>
+                      <button
+                        @click.stop="quickViewArtisan = worker"
+                        class="text-[10px] font-black uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-0.5 rounded-full hover:bg-brand-orange hover:text-white transition-colors"
+                      >{{ t('quick_view') }}</button>
+                    </div>
                   </div>
                 </div>
               </PremiumCard>
@@ -169,23 +184,17 @@
             </div>
 
             <!-- Pagination -->
-            <div v-if="artisans.links.length > 3 && !showMobileMap" class="mt-12 flex justify-center gap-2">
-              <Link
-                v-for="(link, k) in artisans.links"
-                :key="k"
-                :href="link.url || '#'"
-                v-html="link.label"
-                class="w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all"
-                :class="[
-                  link.active ? 'bg-brand-orange text-white' : 'bg-white text-brand-blue hover:bg-slate-50',
-                  !link.url ? 'opacity-30 cursor-not-allowed' : ''
-                ]"
+            <div v-if="!showMobileMap" class="mt-12">
+              <SmartPagination
+                :currentPage="artisans.current_page"
+                :lastPage="artisans.last_page"
+                @go="goToPage"
               />
             </div>
           </div>
 
           <!-- Right: Sticky Map -->
-          <div class="lg:w-2/5 hidden lg:block">
+          <div class="lg:w-2/5 hidden lg:block mt-6">
             <div class="sticky top-24 rounded-3xl overflow-hidden shadow-premium border-4 border-white h-[calc(100vh-140px)] min-h-[500px]">
               <ClientOnly>
                 <WorkerMap 
@@ -199,6 +208,8 @@
         </div>
       </main>
     </div>
+
+    <ArtisanQuickView :artisan="quickViewArtisan" @close="quickViewArtisan = null" />
   </MainLayout>
 </template>
 
@@ -209,19 +220,23 @@ import SeoHead from '../../Components/SeoHead.vue';
 import ActionButton from '../../Components/UI/ActionButton.vue';
 import PremiumCard from '../../Components/UI/PremiumCard.vue';
 import TrustBadge from '../../Components/UI/TrustBadge.vue';
+import ArtisanQuickView from '../../Components/ArtisanQuickView.vue';
+import SmartPagination from '../../Components/SmartPagination.vue';
 const WorkerMap = defineAsyncComponent(() => import('../../Components/WorkerMap.vue'));
 import { Link, router } from '@inertiajs/vue3';
 import { useTranslations } from '../../Composables/useTranslations';
 
-const { t } = useTranslations();
+const { t, locale } = useTranslations();
 
 const props = defineProps({
   artisans: Object,
   categories: Array,
   filters: Object,
+  schema: Object,
 });
 
-const showMobileMap = ref(false);
+const showMobileMap    = ref(false);
+const quickViewArtisan = ref(null);
 
 const form = reactive({
   search: props.filters.search || '',
@@ -235,22 +250,26 @@ const form = reactive({
 
 const hasLocation = computed(() => !!form.lat && !!form.lng);
 
-function handleSearch() {
-  router.get('/en/search', form, {
+function handleSearch(page = 1) {
+  router.get(`/${locale.value}/search`, { ...form, page }, {
     preserveState: true,
     replace: true,
   });
 }
 
+function goToPage(page) {
+  handleSearch(page);
+}
+
 function clearFilters() {
-  form.search = '';
+  form.search     = '';
   form.category_id = '';
   form.min_rating = '';
-  form.distance = 50;
-  form.lat = null;
-  form.lng = null;
-  form.verified = false;
-  handleSearch();
+  form.distance   = 50;
+  form.lat        = null;
+  form.lng        = null;
+  form.verified   = false;
+  handleSearch(1);
 }
 
 function toggleLocation() {

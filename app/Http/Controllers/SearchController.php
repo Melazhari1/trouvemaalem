@@ -8,10 +8,10 @@ use Inertia\Inertia;
 
 class SearchController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, array $extraProps = [])
     {
         $query = Artisan::query()
-            ->with('category')
+            ->with('categories')
             ->withAvg('reviews', 'rating'); // Adds reviews_avg_rating
 
         // 1. Search term — name/bio are JSON; search current locale then fall back to EN
@@ -34,7 +34,7 @@ class SearchController extends Controller
 
         // 2. Category ID
         if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
+            $query->whereHas('categories', fn ($q) => $q->where('categories.id', $request->category_id));
         }
 
         // 3. Minimum average rating
@@ -66,24 +66,112 @@ class SearchController extends Controller
 
         $artisans = $query->paginate(12)->withQueryString();
 
-        return Inertia::render('Search/Index', [
-            'artisans' => $artisans,
+        return Inertia::render('Search/Index', array_merge([
+            'artisans'   => $artisans,
             'categories' => \App\Models\Category::all(),
-            'filters' => $request->only(['search', 'category_id', 'lat', 'lng', 'distance', 'min_rating', 'verified']),
+            'filters'    => $request->only(['search', 'category_id', 'lat', 'lng', 'distance', 'min_rating', 'verified']),
+            'schema'     => $this->getGenericSearchSchema($request, $artisans->total()),
+        ], $extraProps));
+    }
+
+    public function localSearch(Request $request, $_locale, string $service, string $city)
+    {
+        $category = \App\Models\Category::where('slug', $service)->first();
+        $cityName = str_replace('-', ' ', $city);
+
+        $request->merge([
+            'category_id' => $category?->id,
+            'city'        => $cityName,
+        ]);
+
+        return $this->index($request, [
+            'schema' => $this->getLocalSearchSchema($category, $cityName),
         ]);
     }
 
-    public function localSearch(Request $request, $locale, $service, $city)
+    private function getGenericSearchSchema(Request $request, int $total): array
     {
-        // Find category by slug
-        $category = \App\Models\Category::where('slug', $service)->first();
-        
-        // Merge into request for reuse of index logic
-        $request->merge([
-            'category_id' => $category?->id,
-            'city'        => str_replace('-', ' ', $city),
-        ]);
+        $baseUrl = config('app.url');
+        $locale  = app()->getLocale();
+        $pageUrl = "{$baseUrl}/{$locale}/search";
 
-        return $this->index($request);
+        return [
+            '@context' => 'https://schema.org',
+            '@graph'   => [
+                [
+                    '@type'       => 'SearchResultsPage',
+                    '@id'         => "{$pageUrl}#webpage",
+                    'url'         => $pageUrl,
+                    'name'        => 'Recherche d\'artisans — TrouveMaalem',
+                    'description' => "Trouvez des artisans qualifiés au Maroc. {$total} résultats disponibles.",
+                    'inLanguage'  => $locale,
+                    'isPartOf'    => ['@id' => "{$baseUrl}/#website"],
+                    'breadcrumb'  => [
+                        '@type'           => 'BreadcrumbList',
+                        'itemListElement' => [
+                            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Accueil',   'item' => "{$baseUrl}/{$locale}/"],
+                            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Recherche', 'item' => $pageUrl],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function getLocalSearchSchema(?\App\Models\Category $category, string $city): array
+    {
+        $baseUrl  = config('app.url');
+        $locale   = app()->getLocale();
+        $citySlug = str_replace(' ', '-', mb_strtolower($city));
+        $pageUrl  = $category
+            ? "{$baseUrl}/{$locale}/{$category->slug}-a-{$citySlug}"
+            : "{$baseUrl}/{$locale}/search";
+
+        $serviceName = $category ? "{$category->name} à {$city}" : "Artisans à {$city}";
+
+        $breadcrumbs = [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Accueil', 'item' => "{$baseUrl}/{$locale}/"],
+        ];
+        $pos = 2;
+        if ($category) {
+            $breadcrumbs[] = ['@type' => 'ListItem', 'position' => $pos++, 'name' => $category->name, 'item' => "{$baseUrl}/{$locale}/categories/{$category->slug}"];
+        }
+        $breadcrumbs[] = ['@type' => 'ListItem', 'position' => $pos, 'name' => $serviceName, 'item' => $pageUrl];
+
+        $graph = [
+            [
+                '@type'       => 'SearchResultsPage',
+                '@id'         => "{$pageUrl}#webpage",
+                'url'         => $pageUrl,
+                'name'        => "{$serviceName} — Professionnels Vérifiés | TrouveMaalem",
+                'description' => "Trouvez les meilleurs " . ($category ? mb_strtolower($category->name) : 'artisans') . " à {$city}. Professionnels vérifiés disponibles sur TrouveMaalem.",
+                'inLanguage'  => $locale,
+                'isPartOf'    => ['@id' => "{$baseUrl}/#website"],
+                'about'       => ['@id' => "{$pageUrl}#service"],
+                'breadcrumb'  => ['@type' => 'BreadcrumbList', 'itemListElement' => $breadcrumbs],
+            ],
+        ];
+
+        if ($category) {
+            $graph[] = [
+                '@type'       => 'Service',
+                '@id'         => "{$pageUrl}#service",
+                'name'        => $serviceName,
+                'description' => "Services de {$category->name} professionnels à {$city} — disponibles et vérifiés sur TrouveMaalem.",
+                'provider'    => ['@id' => "{$baseUrl}/#organization"],
+                'serviceType' => $category->name,
+                'areaServed'  => [
+                    '@type'            => 'City',
+                    'name'             => $city,
+                    'containedInPlace' => [
+                        '@type'  => 'Country',
+                        'name'   => 'Maroc',
+                        'sameAs' => 'https://www.wikidata.org/wiki/Q1028',
+                    ],
+                ],
+            ];
+        }
+
+        return ['@context' => 'https://schema.org', '@graph' => $graph];
     }
 }

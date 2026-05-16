@@ -9,15 +9,16 @@ class Artisan extends Model
 {
     use HasTranslations;
 
-    public array $translatable = ['name', 'bio', 'location'];
+    public array $translatable = ['name', 'bio'];
 
-    protected $fillable = ['category_id', 'slug', 'city', 'lat', 'lng', 'image', 'rating', 'phone', 'is_verified'];
+    protected $fillable = ['slug', 'city', 'lat', 'lng', 'image', 'rating', 'phone', 'whatsapp', 'is_verified', 'locations'];
 
     protected $casts = [
         'lat'         => 'float',
         'lng'         => 'float',
         'rating'      => 'float',
         'is_verified' => 'boolean',
+        'locations'   => 'array',
     ];
 
     protected $appends = ['average_rating'];
@@ -31,10 +32,6 @@ class Artisan extends Model
     public function getBioEnAttribute(): string { return $this->getTranslation('bio', 'en', false) ?? ''; }
     public function getBioFrAttribute(): string { return $this->getTranslation('bio', 'fr', false) ?? ''; }
     public function getBioArAttribute(): string { return $this->getTranslation('bio', 'ar', false) ?? ''; }
-
-    public function getLocationEnAttribute(): string { return $this->getTranslation('location', 'en', false) ?? ''; }
-    public function getLocationFrAttribute(): string { return $this->getTranslation('location', 'fr', false) ?? ''; }
-    public function getLocationArAttribute(): string { return $this->getTranslation('location', 'ar', false) ?? ''; }
 
     // --- fill() override: maps name_en → setTranslation('name','en',...) ---
 
@@ -57,20 +54,29 @@ class Artisan extends Model
     {
         $attributes = parent::attributesToArray();
         $locale     = app()->getLocale();
+
         foreach ($this->translatable as $field) {
             if (array_key_exists($field, $attributes)) {
                 $attributes[$field] = $this->getTranslation($field, $locale, true);
             }
         }
+
+        // Compute a single display string from the locations array (for FE and schema.org)
+        $attributes['location'] = collect($attributes['locations'] ?? [])
+            ->map(fn ($loc) => $loc[$locale] ?? $loc['en'] ?? '')
+            ->filter()
+            ->implode(', ');
+
         if (!empty($attributes['image']) && !str_starts_with($attributes['image'], 'http')) {
             $attributes['image'] = \Illuminate\Support\Facades\Storage::disk('public')->url($attributes['image']);
         }
+
         return $attributes;
     }
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class);
     }
 
     public function reviews()

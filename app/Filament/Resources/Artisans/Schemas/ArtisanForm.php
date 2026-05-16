@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Artisans\Schemas;
 
 use App\Models\Category;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -27,15 +28,23 @@ class ArtisanForm
                             ->maxLength(191)
                             ->unique(ignoreRecord: true),
 
-                        Select::make('category_id')
-                            ->label('Category')
-                            ->options(Category::all()->pluck('name', 'id'))
-                            ->searchable()
+                        Select::make('categories')
+                            ->label('Categories')
+                            ->multiple()
+                            ->relationship('categories', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (Category $record) => $record->name)
+                            ->preload()
                             ->required(),
 
                         TextInput::make('phone')
                             ->tel()
                             ->maxLength(30),
+
+                        TextInput::make('whatsapp')
+                            ->label('WhatsApp')
+                            ->tel()
+                            ->maxLength(30)
+                            ->helperText('International format, e.g. +212612345678'),
 
                         FileUpload::make('image')
                             ->image()
@@ -49,6 +58,29 @@ class ArtisanForm
                         TextInput::make('city')->maxLength(100),
                         TextInput::make('lat')->label('Latitude')->numeric()->step(0.00000001),
                         TextInput::make('lng')->label('Longitude')->numeric()->step(0.00000001),
+                    ]),
+
+                Section::make('Address Lines')
+                    ->description('Add one or more address lines. Each line can be translated into all three languages.')
+                    ->schema([
+                        Repeater::make('locations')
+                            ->label('')
+                            ->schema([
+                                TextInput::make('en')
+                                    ->label('English')
+                                    ->maxLength(500),
+                                TextInput::make('fr')
+                                    ->label('Français')
+                                    ->maxLength(500),
+                                TextInput::make('ar')
+                                    ->label('العربية')
+                                    ->maxLength(500)
+                                    ->extraAttributes(['dir' => 'rtl', 'class' => 'text-right']),
+                            ])
+                            ->columns(3)
+                            ->addActionLabel('Add address line')
+                            ->collapsible()
+                            ->defaultItems(0),
                     ]),
 
                 Section::make('Status')
@@ -73,10 +105,6 @@ class ArtisanForm
                                 Textarea::make('bio_en')
                                     ->label('Bio')
                                     ->rows(4),
-
-                                TextInput::make('location_en')
-                                    ->label('Location')
-                                    ->maxLength(255),
                             ]),
 
                         Tab::make('🇫🇷 Français')
@@ -88,10 +116,6 @@ class ArtisanForm
                                 Textarea::make('bio_fr')
                                     ->label('Biographie')
                                     ->rows(4),
-
-                                TextInput::make('location_fr')
-                                    ->label('Localisation')
-                                    ->maxLength(255),
                             ]),
 
                         Tab::make('🇸🇦 العربية')
@@ -104,11 +128,6 @@ class ArtisanForm
                                 Textarea::make('bio_ar')
                                     ->label('نبذة شخصية')
                                     ->rows(4)
-                                    ->extraAttributes(['dir' => 'rtl', 'class' => 'text-right']),
-
-                                TextInput::make('location_ar')
-                                    ->label('الموقع')
-                                    ->maxLength(255)
                                     ->extraAttributes(['dir' => 'rtl', 'class' => 'text-right']),
                             ]),
                     ]),

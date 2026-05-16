@@ -8,7 +8,6 @@
 import { ref, onMounted, watch, nextTick } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
@@ -61,11 +60,14 @@ const userIcon = L.divIcon({
 });
 
 const createWorkerIcon = (worker) => {
-  const rating = Number(worker.average_rating || worker.rating || 0).toFixed(1);
+  const ratingRaw = Number(worker.average_rating || worker.rating || 0);
+  const ratingHtml = ratingRaw > 0
+    ? `<span class="marker-rating">★ ${ratingRaw.toFixed(1)}</span>`
+    : `<span class="marker-rating marker-no-rating">—</span>`;
   return L.divIcon({
     html: `
       <div class="premium-marker">
-        <span class="marker-rating">★ ${rating}</span>
+        ${ratingHtml}
         <div class="marker-tip"></div>
       </div>
     `,
@@ -92,9 +94,14 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
 
 function buildPopup(worker) {
   const rating = Number(worker.average_rating || worker.rating || 0);
-  const stars = Array.from({ length: 5 }, (_, i) =>
-    `<span style="color:${i < Math.round(rating) ? '#d78126' : '#e2e8f0'}; font-size:14px;">★</span>`
-  ).join('');
+
+  const ratingHtml = rating > 0 ? `
+    <div class="popup-rating">
+      ${Array.from({ length: 5 }, (_, i) =>
+        `<span style="color:${i < Math.round(rating) ? '#d78126' : '#e2e8f0'}; font-size:14px;">★</span>`
+      ).join('')}
+      <span class="popup-rating-num">${rating.toFixed(1)}</span>
+    </div>` : '';
 
   let distanceHtml = '';
   if (props.userLocation && worker.lat && worker.lng) {
@@ -111,10 +118,7 @@ function buildPopup(worker) {
           <div class="popup-category">${worker.category?.name || ''}</div>
         </div>
       </div>
-      <div class="popup-rating">
-        ${stars}
-        <span class="popup-rating-num">${rating.toFixed(1)}</span>
-      </div>
+      ${ratingHtml}
       <div class="popup-location">📍 ${worker.location}</div>
       ${distanceHtml}
       <a href="/artisan/${worker.slug}" class="popup-btn">${props.translations.view_details} →</a>
@@ -170,7 +174,11 @@ function renderMarkers() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Expose L globally so the UMD plugin patches the same instance we use
+  window.L = L;
+  await import('leaflet.markercluster');
+
   fetchWorkers();
   nextTick(() => {
     if (!mapEl.value) return;
@@ -226,6 +234,9 @@ watch(
 }
 .marker-rating {
   @apply text-[11px] font-black whitespace-nowrap;
+}
+.marker-no-rating {
+  @apply text-slate-400;
 }
 .marker-tip {
   @apply absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-r-2 border-b-2 border-brand-blue rotate-45;

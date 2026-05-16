@@ -3,6 +3,7 @@
     <SeoHead
       :title="t('seo_categories_title')"
       :description="t('seo_categories_desc')"
+      :schema="schema"
     />
 
     <section class="container section page-header">
@@ -21,7 +22,7 @@
             <p>{{ category.description }}</p>
             <div class="meta">
               <span class="count">{{ t('artisans_count', { count: category.artisans_count || 0 }) }}</span>
-              <Link :href="`/categories/${category.slug}`" class="view-link">{{ t('view_artisans') }} &rarr;</Link>
+              <Link :href="`/${locale}/categories/${category.slug}`" class="view-link">{{ t('view_artisans') }} &rarr;</Link>
             </div>
           </div>
         </article>
@@ -36,10 +37,11 @@ import SeoHead from '../../Components/SeoHead.vue';
 import { Link } from '@inertiajs/vue3';
 import { useTranslations } from '../../Composables/useTranslations';
 
-const { t } = useTranslations();
+const { t, locale } = useTranslations();
 
 const props = defineProps({
   categories: Array,
+  schema: Object,
 });
 </script>
 

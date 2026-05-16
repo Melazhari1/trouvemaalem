@@ -21,7 +21,7 @@ class EditArtisan extends EditRecord
     {
         $record = $this->getRecord();
         $data['image'] = $record->getRawOriginal('image');
-        foreach (['name', 'bio', 'location'] as $field) {
+        foreach (['name', 'bio'] as $field) {
             foreach (['en', 'fr', 'ar'] as $locale) {
                 $data["{$field}_{$locale}"] = $record->getTranslation($field, $locale, false) ?? '';
             }

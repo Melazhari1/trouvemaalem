@@ -10,6 +10,7 @@ return [
     'nav_home' => 'Accueil',
     'nav_categories' => 'Catégories',
     'nav_search' => 'Recherche',
+    'nav_blog' => 'Blog',
 
     // Hero Section
     'hero_title_1' => 'Trouvez des',
@@ -62,6 +63,8 @@ return [
     'contact_artisan' => 'Contacter maintenant',
     'btn_whatsapp' => 'WhatsApp',
     'btn_call' => 'Appeler',
+    'view_profile' => 'Voir le profil',
+    'quick_view'   => 'Aperçu rapide',
     'verified_badge' => 'Vérifié',
     'top_rated' => 'Mieux noté',
     'fast_responder' => 'Réponse rapide',

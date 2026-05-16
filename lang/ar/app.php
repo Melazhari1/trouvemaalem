@@ -10,6 +10,7 @@ return [
     'nav_home' => 'الرئيسية',
     'nav_categories' => 'الفئات',
     'nav_search' => 'بحث',
+    'nav_blog' => 'المدونة',
 
     // Hero Section
     'hero_title_1' => 'ابحث عن',
@@ -62,6 +63,8 @@ return [
     'contact_artisan' => 'اتصل الآن',
     'btn_whatsapp' => 'واتساب',
     'btn_call' => 'اتصل الآن',
+    'view_profile' => 'عرض الملف الشخصي',
+    'quick_view'   => 'معاينة سريعة',
     'verified_badge' => 'موثق',
     'top_rated' => 'الأعلى تقييماً',
     'fast_responder' => 'استجابة سريعة',

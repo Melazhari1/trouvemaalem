@@ -3,6 +3,7 @@
     <SeoHead
       :title="t('seo_home_title')"
       :description="t('seo_home_desc')"
+      :schema="schema"
     />
 
     <!-- Hero Section -->
@@ -201,7 +202,7 @@
                 <TrustBadge type="top" size="sm">{{ t('top_rated') }}</TrustBadge>
                 <TrustBadge type="verified" size="sm">{{ t('verified_badge') }}</TrustBadge>
               </div>
-              <div class="absolute bottom-4 right-4">
+              <div v-if="worker.rating > 0" class="absolute bottom-4 right-4">
                 <div class="bg-white/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
                   <span class="text-brand-orange text-sm font-black">★</span>
                   <span class="text-brand-blue text-sm font-black">{{ Number(worker.rating).toFixed(1) }}</span>
@@ -214,7 +215,15 @@
             <div class="flex justify-between items-start mb-4">
               <div>
                 <h3 class="text-xl text-brand-blue mb-1">{{ worker.name }}</h3>
-                <Link :href="`/${locale}/categories/${worker.category.slug}`" @click.stop class="text-brand-orange text-xs font-bold uppercase tracking-widest hover:underline">{{ worker.category.name }}</Link>
+                <div class="flex flex-wrap gap-2">
+                  <Link
+                    v-for="cat in worker.categories"
+                    :key="cat.id"
+                    :href="`/${locale}/categories/${cat.slug}`"
+                    @click.stop
+                    class="text-brand-orange text-xs font-bold uppercase tracking-widest hover:underline"
+                  >{{ cat.name }}</Link>
+                </div>
               </div>
             </div>
 
@@ -227,13 +236,20 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                 <span class="text-[11px] font-bold uppercase">{{ worker.city }}</span>
               </div>
-              <ActionButton size="sm" variant="ghost" class="p-0!">{{ t('view_details') }} →</ActionButton>
+              <div class="flex items-center gap-2">
+                <button
+                  @click.stop="quickViewArtisan = worker"
+                  class="text-[10px] font-black uppercase tracking-wider text-brand-orange border border-brand-orange/30 px-2 py-1 rounded-full hover:bg-brand-orange hover:text-white transition-colors"
+                >{{ t('quick_view') }}</button>
+                <ActionButton size="sm" variant="ghost" class="p-0!">{{ t('view_details') }} →</ActionButton>
+              </div>
             </div>
           </div>
         </PremiumCard>
       </div>
     </section>
 
+    <ArtisanQuickView :artisan="quickViewArtisan" @close="quickViewArtisan = null" />
   </MainLayout>
 </template>
 
@@ -244,11 +260,13 @@ import SeoHead from '../Components/SeoHead.vue';
 import ActionButton from '../Components/UI/ActionButton.vue';
 import PremiumCard from '../Components/UI/PremiumCard.vue';
 import TrustBadge from '../Components/UI/TrustBadge.vue';
+import ArtisanQuickView from '../Components/ArtisanQuickView.vue';
 const WorkerMap = defineAsyncComponent(() => import('../Components/WorkerMap.vue'));
 import { Link, router } from '@inertiajs/vue3';
 import { useTranslations } from '../Composables/useTranslations';
 
 const { t, locale } = useTranslations();
+const quickViewArtisan = ref(null);
 const slider = ref(null);
 let isDown = false;
 let startX;
@@ -278,6 +296,7 @@ const props = defineProps({
   topArtisans: Array,
   cities: Array,
   topFaqs: Array,
+  schema: Object,
 });
 
 const selectedCategory = ref('');
@@ -318,7 +337,7 @@ const filteredArtisans = computed(() => {
   let results = [...props.artisans];
 
   if (selectedCategory.value) {
-    results = results.filter(w => w.category_id === selectedCategory.value);
+    results = results.filter(w => w.categories?.some(c => c.id == selectedCategory.value));
   }
   if (selectedCity.value) {
     results = results.filter(w => w.city === selectedCity.value);

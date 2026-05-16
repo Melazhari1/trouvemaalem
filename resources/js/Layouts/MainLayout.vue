@@ -73,7 +73,7 @@
             v-for="item in navItems" 
             :key="item.href"
             :href="item.href"
-            class="text-3xl font-black text-brand-blue uppercase tracking-tighter"
+            class="text-xl font-black text-brand-blue uppercase tracking-tighter"
             @click="mobileMenuOpen = false"
           >
             {{ item.label }}
@@ -159,7 +159,7 @@ const navItems = computed(() => [
   { label: t('nav_home'), href: `/${locale.value}` },
   { label: t('nav_categories'), href: `/${locale.value}/categories` },
   { label: t('nav_search'), href: `/${locale.value}/search` },
-  { label: 'Blog', href: `/${locale.value}/blog` },
+  { label: t('nav_blog'), href: `/${locale.value}/blog` },
 ]);
 
 const isCurrent = (href) => {
