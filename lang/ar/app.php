@@ -140,4 +140,9 @@ return [
     // General form errors
     'recaptcha_failed'         => 'فشل التحقق من reCAPTCHA. يرجى المحاولة مرة أخرى.',
     'rate_limit_error'         => 'محاولات كثيرة جداً. يرجى الانتظار قبل المحاولة مرة أخرى.',
+
+    // FAQ section (home page)
+    'faq_section_title'        => 'الأسئلة الشائعة',
+    'faq_section_subtitle'     => 'كل ما تحتاج معرفته عن trouvemaalem.',
+    'faq_see_all'              => 'عرض جميع الأسئلة',
 ];

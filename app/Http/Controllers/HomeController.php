@@ -14,7 +14,7 @@ class HomeController extends Controller
         $artisans = Artisan::with('categories')->get();
         $topArtisans = Artisan::with('categories')
             ->orderBy('rating', 'desc')
-            ->take(10)
+            ->take(6)
             ->get();
 
         // Extract unique cities for the filter dropdown

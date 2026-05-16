@@ -189,8 +189,8 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <PremiumCard 
-          v-for="worker in topArtisans.slice(0, 9)" 
+        <PremiumCard
+          v-for="worker in topArtisans"
           :key="worker.id"
           class="h-full flex flex-col"
           @click="goToWorker(worker)"
@@ -250,6 +250,45 @@
     </section>
 
     <ArtisanQuickView :artisan="quickViewArtisan" @close="quickViewArtisan = null" />
+
+    <!-- FAQ Section -->
+    <section v-if="topFaqs && topFaqs.length" class="bg-slate-50 py-24 md:py-32">
+      <div class="container max-w-3xl">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl text-brand-blue mb-4">{{ t('faq_section_title') }}</h2>
+          <p class="text-slate-500 text-lg">{{ t('faq_section_subtitle') }}</p>
+          <div class="w-16 h-2 bg-brand-orange mx-auto rounded-full mt-6"></div>
+        </div>
+
+        <div class="space-y-4">
+          <div
+            v-for="(faq, index) in topFaqs"
+            :key="faq.id"
+            class="bg-white rounded-2xl shadow-soft overflow-hidden"
+          >
+            <button
+              class="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
+              @click="openFaq = openFaq === index ? null : index"
+            >
+              <span class="text-brand-blue font-bold text-base">{{ faq.question }}</span>
+              <span class="flex-none text-brand-orange transition-transform duration-300" :class="{ 'rotate-45': openFaq === index }">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </span>
+            </button>
+            <div v-show="openFaq === index" class="px-6 pb-5 text-slate-500 text-sm leading-relaxed border-t border-slate-100 pt-4">
+              {{ faq.answer }}
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <Link :href="`/${locale}/faq`" class="inline-flex items-center gap-2 text-brand-orange font-bold hover:underline">
+            {{ t('faq_see_all') }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </Link>
+        </div>
+      </div>
+    </section>
   </MainLayout>
 </template>
 
@@ -267,6 +306,7 @@ import { useTranslations } from '../Composables/useTranslations';
 
 const { t, locale } = useTranslations();
 const quickViewArtisan = ref(null);
+const openFaq = ref(null);
 const slider = ref(null);
 let isDown = false;
 let startX;

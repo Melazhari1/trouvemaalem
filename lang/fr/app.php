@@ -140,4 +140,9 @@ return [
     // General form errors
     'recaptcha_failed'         => 'Échec de la vérification reCAPTCHA. Veuillez réessayer.',
     'rate_limit_error'         => 'Trop de tentatives. Veuillez patienter avant de réessayer.',
+
+    // FAQ section (home page)
+    'faq_section_title'        => 'Questions fréquentes',
+    'faq_section_subtitle'     => 'Tout ce que vous devez savoir sur trouvemaalem.',
+    'faq_see_all'              => 'Voir toutes les questions',
 ];

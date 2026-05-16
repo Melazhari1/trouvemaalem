@@ -140,4 +140,9 @@ return [
     // General form errors
     'recaptcha_failed'         => 'reCAPTCHA verification failed. Please try again.',
     'rate_limit_error'         => 'Too many attempts. Please wait before trying again.',
+
+    // FAQ section (home page)
+    'faq_section_title'        => 'Frequently Asked Questions',
+    'faq_section_subtitle'     => 'Everything you need to know about trouvemaalem.',
+    'faq_see_all'              => 'See all questions',
 ];
