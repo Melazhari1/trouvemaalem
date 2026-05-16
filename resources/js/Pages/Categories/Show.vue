@@ -33,6 +33,8 @@
             <img
               :src="artisan.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(artisan.name)}&background=random&size=128`"
               :alt="artisan.name"
+              loading="lazy"
+              decoding="async"
             />
             <div v-if="artisan.categories?.[0]?.name" class="badge">{{ artisan.categories[0].name }}</div>
           </div>

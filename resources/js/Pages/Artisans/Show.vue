@@ -19,7 +19,7 @@
         <div class="container relative z-10 px-4">
           <div class="flex flex-col md:flex-row items-center md:items-end gap-8">
             <div class="w-48 h-48 md:w-64 md:h-64 rounded-3xl overflow-hidden border-8 border-white/10 shadow-premium flex-shrink-0">
-              <img :src="artisan.image" :alt="artisan.name" class="w-full h-full object-fit-cover" />
+              <img :src="artisan.image" :alt="artisan.name" loading="lazy" decoding="async" class="w-full h-full object-fit-cover" />
             </div>
             
             <div class="flex-1 text-center md:text-left pb-4">

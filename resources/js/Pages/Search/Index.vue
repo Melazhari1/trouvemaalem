@@ -120,7 +120,7 @@
               >
                 <template #header>
                   <div class="h-48 relative overflow-hidden">
-                    <img :src="worker.image" :alt="worker.name" class="w-full h-full object-fit-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img :src="worker.image" :alt="worker.name" loading="lazy" decoding="async" class="w-full h-full object-fit-cover transition-transform duration-500 group-hover:scale-110" />
                     <div class="absolute top-3 left-3 flex flex-col gap-2">
                       <TrustBadge v-if="worker.is_verified" type="verified" size="xs">{{ t('verified_badge') }}</TrustBadge>
                       <TrustBadge v-if="worker.average_rating >= 4.5" type="top" size="xs">{{ t('top_rated') }}</TrustBadge>

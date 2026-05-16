@@ -22,7 +22,7 @@
       <div class="article-container">
         <!-- Featured Image -->
         <div class="article-featured-image" v-if="post.image">
-          <img :src="post.image" :alt="post.title" />
+          <img :src="post.image" :alt="post.title" loading="lazy" decoding="async" />
         </div>
         
         <!-- Post Content -->

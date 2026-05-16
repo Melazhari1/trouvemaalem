@@ -129,7 +129,7 @@
           :href="`/${locale}/categories/${cat.slug}`"
           class="flex-none w-[280px] md:w-[350px] group relative h-96 rounded-3xl overflow-hidden shadow-soft transition-transform duration-500 hover:-translate-y-2 snap-start"
         >
-          <img :src="cat.image" :alt="cat.name" class="absolute inset-0 w-full h-full object-fit-cover transition-transform duration-700 group-hover:scale-110" />
+          <img :src="cat.image" :alt="cat.name" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-fit-cover transition-transform duration-700 group-hover:scale-110" />
           <div class="absolute inset-0 bg-gradient-to-t from-brand-blue/90 via-brand-blue/20 to-transparent"></div>
           <div class="absolute bottom-8 left-8 right-8 text-white">
             <h3 class="text-2xl font-black mb-2">{{ cat.name }}</h3>
@@ -197,7 +197,7 @@
         >
           <template #header>
             <div class="h-64 relative overflow-hidden">
-              <img :src="worker.image" :alt="worker.name" class="w-full h-full object-fit-cover transition-transform duration-500 group-hover:scale-110" />
+              <img :src="worker.image" :alt="worker.name" loading="lazy" decoding="async" class="w-full h-full object-fit-cover transition-transform duration-500 group-hover:scale-110" />
               <div class="absolute top-4 left-4 flex flex-col gap-2">
                 <TrustBadge type="top" size="sm">{{ t('top_rated') }}</TrustBadge>
                 <TrustBadge type="verified" size="sm">{{ t('verified_badge') }}</TrustBadge>
