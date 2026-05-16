@@ -12,7 +12,7 @@ class SitemapController extends Controller
 
     public function index()
     {
-        $base = rtrim(config('app.url'), '/');
+        $base = rtrim(request()->getSchemeAndHttpHost(), '/');
 
         $artisans   = Artisan::whereNotNull('slug')->get(['slug', 'updated_at']);
         $categories = Category::whereNotNull('slug')->get(['slug', 'updated_at']);
