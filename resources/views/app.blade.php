@@ -13,6 +13,11 @@
         <!-- Scripts -->
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
+
+        <!-- Structured Data (server-side for crawlers / validators) -->
+        @if(!empty($page['props']['schema']))
+        <script type="application/ld+json">{!! json_encode($page['props']['schema'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+        @endif
     </head>
     <body class="font-sans antialiased text-gray-900 bg-gray-50">
         @inertia
