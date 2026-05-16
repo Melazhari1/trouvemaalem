@@ -23,8 +23,11 @@ Route::get('/', function () {
     return redirect('/fr');
 });
 
-// Sitemap is usually not localized by URL prefix
+// Sitemap index + per-locale sitemaps
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap-{locale}.xml', [SitemapController::class, 'locale'])
+    ->where('locale', 'fr|en|ar')
+    ->name('sitemap.locale');
 
 // Group all localized routes
 Route::prefix('{locale}')->where(['locale' => 'en|fr|ar'])->group(function () {
