@@ -53,23 +53,22 @@ class SitemapController extends Controller
         $posts      = Post::whereNotNull('slug')->where('is_published', true)->get(['slug', 'updated_at']);
 
         $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n";
-        $xml .= '        xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
         foreach (self::STATIC_PAGES as [$path, $freq, $priority]) {
-            $xml .= $this->url("{$base}/{$locale}{$path}", $freq, $priority, null, $this->alternates($base, $path));
+            $xml .= $this->url("{$base}/{$locale}{$path}", $freq, $priority, null);
         }
 
         foreach ($categories as $item) {
-            $xml .= $this->url("{$base}/{$locale}/categories/{$item->slug}", 'weekly', '0.7', $item->updated_at, $this->alternates($base, "/categories/{$item->slug}"));
+            $xml .= $this->url("{$base}/{$locale}/categories/{$item->slug}", 'weekly', '0.7', $item->updated_at);
         }
 
         foreach ($artisans as $item) {
-            $xml .= $this->url("{$base}/{$locale}/artisan/{$item->slug}", 'weekly', '0.9', $item->updated_at, $this->alternates($base, "/artisan/{$item->slug}"));
+            $xml .= $this->url("{$base}/{$locale}/artisan/{$item->slug}", 'weekly', '0.9', $item->updated_at);
         }
 
         foreach ($posts as $item) {
-            $xml .= $this->url("{$base}/{$locale}/blog/{$item->slug}", 'monthly', '0.7', $item->updated_at, $this->alternates($base, "/blog/{$item->slug}"));
+            $xml .= $this->url("{$base}/{$locale}/blog/{$item->slug}", 'monthly', '0.7', $item->updated_at);
         }
 
         $xml .= '</urlset>';
@@ -77,17 +76,7 @@ class SitemapController extends Controller
         return $this->xmlResponse($xml);
     }
 
-    private function alternates(string $base, string $path): string
-    {
-        $out = '';
-        foreach (self::LOCALES as $loc) {
-            $out .= "    <xhtml:link rel=\"alternate\" hreflang=\"{$loc}\" href=\"{$base}/{$loc}{$path}\"/>\n";
-        }
-        $out .= "    <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$base}/fr{$path}\"/>\n";
-        return $out;
-    }
-
-    private function url(string $loc, string $freq, string $priority, $lastmod, string $alternates): string
+    private function url(string $loc, string $freq, string $priority, ?\Illuminate\Support\Carbon $lastmod): string
     {
         $out  = "  <url>\n";
         $out .= "    <loc>{$loc}</loc>\n";
@@ -96,7 +85,6 @@ class SitemapController extends Controller
         if ($lastmod) {
             $out .= "    <lastmod>{$lastmod->toAtomString()}</lastmod>\n";
         }
-        $out .= $alternates;
         $out .= "  </url>\n";
         return $out;
     }
