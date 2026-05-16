@@ -252,7 +252,7 @@
     <ArtisanQuickView :artisan="quickViewArtisan" @close="quickViewArtisan = null" />
 
     <!-- FAQ Section -->
-    <section v-if="topFaqs && topFaqs.length" class="bg-slate-50 py-24 md:py-32">
+    <section v-if="topFaqs && topFaqs.length" class="bg-slate-50 pt-24 pb-12 md:pt-32 md:pb-16">
       <div class="container max-w-3xl">
         <div class="text-center mb-16">
           <h2 class="text-3xl md:text-5xl text-brand-blue mb-4">{{ t('faq_section_title') }}</h2>
